@@ -1,0 +1,29 @@
+{
+  "name": "type-todo",
+  "version": "1.0.0",
+  "description": "make a todo app using typescript",
+  "main": "server.js",
+  "scripts": {
+    "compile": "tsc",
+    "compile:watch": "tsc --watch",
+    "start": "node build/server.js",
+    "build": "webpack",
+    "build:watch": "webpack --watch"
+  },
+  "author": "Calvin Feng",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.11.1",
+    "@types/node": "^10.1.2",
+    "@types/react": "^16.3.14",
+    "@types/react-dom": "^16.0.5",
+    "express": "^4.16.3",
+    "pg": "^7.4.3",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "ts-loader": "^4.3.0",
+    "typescript": "^2.8.3",
+    "webpack": "^4.9.1",
+    "webpack-cli": "^2.1.4"
+  }
+}
