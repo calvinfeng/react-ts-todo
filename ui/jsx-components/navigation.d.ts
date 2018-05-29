@@ -1,15 +1,20 @@
+/**
+ * @author Calvin Feng
+ */
+
 import * as React from 'react'
 
 declare interface NavigationProps {
     appName: string
+    tabs: string[]
 }
 
 declare interface NavigationState {
-    tab: number
+    currentTab: number
 }
 
 declare class Navigation extends React.Component<NavigationProps, NavigationState> {
-    // Leave empty intentionally
+    tabs(): JSX.Element[]
 }
 
 export default Navigation

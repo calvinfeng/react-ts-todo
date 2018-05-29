@@ -1,11 +1,6 @@
-import { Router, Request, Response } from 'express';
-import * as Path from 'path';
+/**
+ * @author Calvin Feng
+ */
 
-const router: Router = Router();
-
-router.get('/', (req: Request, res: Response) => {
-    res.sendFile(Path.join(__dirname, '../../public/index.html'));
-});
-
-export const RootController: Router = router;
-export * from './welcome.controller';
+export * from './root.controller';
+export * from './todo.controller';
