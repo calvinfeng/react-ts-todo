@@ -11,7 +11,7 @@ class Navigation extends React.Component {
 
     get tabs() {
         return this.props.tabs.map((tab) => {
-            return <button>{tab}</button>;
+            return <button key={tab}>{tab}</button>;
         });
     }
 

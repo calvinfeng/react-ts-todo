@@ -8,10 +8,10 @@ module.exports = {
     },
     resolve: {
         // Add `.ts` and `.tsx` as a resolvable extension.
-        extensions: [".ts", ".tsx", ".js"]
+        extensions: [".ts", ".tsx", ".js", ".jsx"]
     },
     module: {
-        rules: [
+        rules: [ 
             // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
             { test: /\.tsx?$/, loader: "ts-loader" },
             { test: /\.jsx?$/, loader: "babel-loader" }

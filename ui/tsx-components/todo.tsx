@@ -4,6 +4,7 @@
 
 import * as React from 'react';
 import Navigation from '../jsx-components/navigation.jsx';
+import axios from 'axios';
 
 interface TodoItem {
     id: number;
@@ -87,6 +88,17 @@ class Todo extends React.Component<TodoProps, TodoStates> {
         return firstRand + secondRand + thirdRand;
     }
 
+    async getTodoSequentially(): Promise<TodoItem[]> {
+        const firstTodo = await this.fetchTodo(1);
+        const secondTodo = await this.fetchTodo(2);
+        const thirdTodo = await this.fetchTodo(3);        
+        return [firstTodo, secondTodo, thirdTodo];
+    }
+    
+    fetchTodo(id: number): Promise<any> {
+        return axios.get(`api/todos/${id}/`);
+    }
+
     componentDidMount() {
         this.collectRandomNums().then((answer) => {
             this.setState({
@@ -94,6 +106,10 @@ class Todo extends React.Component<TodoProps, TodoStates> {
                 answer
             });
         });
+
+        this.getTodoSequentially().then((todoList: TodoItem[]) => {
+            console.log(todoList);
+        })
     }
 
     render() {
