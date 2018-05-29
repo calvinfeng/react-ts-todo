@@ -3,13 +3,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 // Import own files
-import TodoComponent from './component';
+import MainContent from './tsx-components/main_content';
 
 document.addEventListener("DOMContentLoaded", () => {
-    ReactDOM.render(
-        <TodoComponent 
-            title={"Workout Routine"} 
-            items={[{id: 1, name: "Bench Press", description: "5 sets of 160lbs"}]}
-            date={new Date()} />, 
-        document.getElementById('root'));
+    ReactDOM.render(<MainContent />, document.getElementById('root'));
 });

@@ -2,7 +2,8 @@
  * @author Calvin Feng
  */
 
- import * as React from 'react';
+import * as React from 'react';
+import Navigation from '../jsx-components/navigation.jsx';
 
 interface TodoItem {
     id: number;
@@ -22,7 +23,7 @@ interface TodoStates {
     answer: null | number;
 }
 
-class TodoComponent extends React.Component<TodoProps, TodoStates> {
+class Todo extends React.Component<TodoProps, TodoStates> {
     constructor(props: TodoProps) {
         super(props);
 
@@ -108,4 +109,4 @@ class TodoComponent extends React.Component<TodoProps, TodoStates> {
     }
 }
 
-export default TodoComponent;
+export default Todo;
