@@ -3,8 +3,10 @@
  */
 
 import * as React from 'react';
-import Navigation from '../jsx-components/navigation.jsx';
-import axios from 'axios';
+import Navigation from '../jsx-components/navigation';
+import TodoForm from '../jsx-components/todo_form';
+import { fetchTodo, createTodo } from '../util/http';
+
 
 interface TodoItem {
     id: number;
@@ -14,14 +16,13 @@ interface TodoItem {
 
 interface TodoProps {
     title: string;
-    items: TodoItem[];
-    date: Date;
 }
 
 interface TodoStates {
+    todoItems: TodoItem[];
     toggleDescription: boolean;
-    computing: boolean;
-    answer: null | number;
+    isFetching: boolean;
+    error: string;
 }
 
 class Todo extends React.Component<TodoProps, TodoStates> {
@@ -29,14 +30,15 @@ class Todo extends React.Component<TodoProps, TodoStates> {
         super(props);
 
         this.state = {
+            error: "",
             toggleDescription: false,
-            computing: true,
-            answer: null
+            isFetching: false,
+            todoItems: [],
         };
     }
 
     get todoItems(): JSX.Element[] {
-        return this.props.items.map((item) => {
+        return this.state.todoItems.map((item) => {
             if (this.state.toggleDescription) {
                 return <li key={item.id}>{item.description}</li>;
             }
@@ -45,81 +47,77 @@ class Todo extends React.Component<TodoProps, TodoStates> {
         });
     }
 
-    get button(): JSX.Element {
+    get toggle(): JSX.Element {
         if (this.state.toggleDescription) {
-            return <button onClick={this.toggleTodoName}>Toggle Todo Name</button>;
+            return <button onClick={this.toggleTodoDescription}>Show name</button>;
         }
 
-        return <button onClick={this.toggleTodoDescription}>Toggle Todo Description</button>;
+        return <button onClick={this.toggleTodoDescription}>Show description</button>;
     }
 
-    get computingStatus(): JSX.Element {
-        if (this.state.computing) {
-            return <p>Computing...</p>;
+    get fetchingState(): JSX.Element {
+        if (this.state.isFetching) {
+            return <p>Fetching todo items...</p>;
         }
 
-        return <p>Answer is {this.state.answer}</p>;
-    }
-
-    toggleTodoName = () => {
-        this.setState({
-            toggleDescription: false
-        });
+        return <p>Done fetching!</p>;
     }
 
     toggleTodoDescription = () => {
         this.setState({
-            toggleDescription: true
+            toggleDescription: !this.state.toggleDescription
         });
-    }
+    };
 
-    generateRandNum(): Promise<number> {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(Math.random());
-            }, 1000);
-        });
-    }
+    handleSubmitTodo = (data: any) => {
+        createTodo(data).then((todo) => {
+            this.setState({ 
+                todoItems : this.state.todoItems.concat([todo]),
+                error: ""
+            });
+        }).catch((errorData) => {
+            this.setState({ error: errorData.error });
+        })
+    };
 
-    async collectRandomNums(): Promise<number> {
-        const firstRand = await this.generateRandNum();
-        const secondRand = await this.generateRandNum();
-        const thirdRand = await this.generateRandNum();
-        return firstRand + secondRand + thirdRand;
-    }
-
+    /**
+     * This is a silly demonstration on how to use async/await to fetch synchronously. This is 
+     * especially useful when it comes to fetching multiple pages of result.
+     */
     async getTodoSequentially(): Promise<TodoItem[]> {
-        const firstTodo = await this.fetchTodo(1);
-        const secondTodo = await this.fetchTodo(2);
-        const thirdTodo = await this.fetchTodo(3);        
-        return [firstTodo, secondTodo, thirdTodo];
-    }
-    
-    fetchTodo(id: number): Promise<any> {
-        return axios.get(`api/todos/${id}/`);
+        const results: TodoItem[] = [];
+
+        let i = 1;
+        let isFetching = true;
+        while (isFetching) {
+            try {
+                const todo = await fetchTodo(i);
+                results.push(todo);
+                i += 1;
+            } catch (e) {
+                console.log(e);
+                isFetching = false;
+            }
+        }  
+
+        return results;
     }
 
     componentDidMount() {
-        this.collectRandomNums().then((answer) => {
-            this.setState({
-                computing: false,
-                answer
-            });
+        this.getTodoSequentially().then((todoItems: TodoItem[]) => {
+            this.setState({ todoItems });
         });
-
-        this.getTodoSequentially().then((todoList: TodoItem[]) => {
-            console.log(todoList);
-        })
     }
 
     render() {
         return (
             <section className="todo">
                 <h1>{this.props.title}</h1>
-                <h2>{this.props.date.toDateString()}</h2>
+                <p>{this.state.error}</p>
                 <ul>{this.todoItems}</ul>
-                <div className="button-container">{this.button}</div>
-                <div className="computer">{this.computingStatus}</div>
+                <div className="toggle-container">{this.toggle}</div>
+                <div className="computer">{this.fetchingState}</div>
+                <TodoForm handleSubmitTodo={this.handleSubmitTodo} />
             </section>
         );
     }

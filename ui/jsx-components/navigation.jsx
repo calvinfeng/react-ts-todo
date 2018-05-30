@@ -6,7 +6,7 @@ import React from 'react';
 
 class Navigation extends React.Component {
     state = {
-        currentTab: 0
+        option: 0
     }
 
     get tabs() {

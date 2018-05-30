@@ -6,7 +6,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Todo from './tsx-components/todo';
-import Navigation from './jsx-components/navigation.jsx';
+import Navigation from './jsx-components/navigation';
 
 
 class App extends React.Component<any, any> {
@@ -17,11 +17,8 @@ class App extends React.Component<any, any> {
     render() {
         return (
             <section className="main-content">
-                <Navigation appName={"Todo"} tabs={["Home", "Todo", "Settings"]} />
-                <Todo 
-                    title={"Workout Routine"} 
-                    items={[{id: 1, name: "Bench Press", description: "5 sets of 160lbs"}]}
-                    date={new Date()} />
+                <Navigation appName={"Todo"} tabs={["Home", "Todo", "Login"]} />
+                <Todo title={"Workout Routine"} />
             </section>
         )
     }
