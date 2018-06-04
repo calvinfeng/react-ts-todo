@@ -5,8 +5,9 @@
  // Import the entire library as a single variable
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { MuiThemeProvider, lightBaseTheme, getMuiTheme } from 'material-ui/styles';
 import Todo from './tsx-components/todo';
-import Navigation from './jsx-components/navigation';
+import './index.scss';
 
 
 class App extends React.Component<any, any> {
@@ -16,10 +17,9 @@ class App extends React.Component<any, any> {
 
     render() {
         return (
-            <section className="main-content">
-                <Navigation appName={"Todo"} tabs={["Home", "Todo", "Login"]} />
+            <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
                 <Todo title={"Workout Routine"} />
-            </section>
+            </MuiThemeProvider>
         )
     }
 }

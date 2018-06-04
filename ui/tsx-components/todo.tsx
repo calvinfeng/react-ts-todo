@@ -5,7 +5,9 @@
 import * as React from 'react';
 import Navigation from '../jsx-components/navigation';
 import TodoForm from '../jsx-components/todo_form';
-import { fetchTodo, createTodo } from '../util/http';
+import { fetchTodo, createTodo, sleep } from '../util/http';
+import RaisedButton from 'material-ui/RaisedButton';
+import CircularProgress from 'material-ui/CircularProgress';
 
 
 interface TodoItem {
@@ -32,7 +34,7 @@ class Todo extends React.Component<TodoProps, TodoStates> {
         this.state = {
             error: "",
             toggleDescription: false,
-            isFetching: false,
+            isFetching: true,
             todoItems: [],
         };
     }
@@ -49,15 +51,15 @@ class Todo extends React.Component<TodoProps, TodoStates> {
 
     get toggle(): JSX.Element {
         if (this.state.toggleDescription) {
-            return <button onClick={this.toggleTodoDescription}>Show name</button>;
+            return <RaisedButton onClick={this.toggleTodoDescription}>Show name</RaisedButton>;
         }
 
-        return <button onClick={this.toggleTodoDescription}>Show description</button>;
+        return <RaisedButton onClick={this.toggleTodoDescription}>Show description</RaisedButton>;
     }
 
     get fetchingState(): JSX.Element {
         if (this.state.isFetching) {
-            return <p>Fetching todo items...</p>;
+            return <CircularProgress mode={"indeterminate"} />
         }
 
         return <p>Done fetching!</p>;
@@ -87,36 +89,40 @@ class Todo extends React.Component<TodoProps, TodoStates> {
     async getTodoSequentially(): Promise<TodoItem[]> {
         const results: TodoItem[] = [];
 
-        let i = 1;
+        let id = 1;
         let isFetching = true;
         while (isFetching) {
             try {
-                const todo = await fetchTodo(i);
+                await sleep(250);
+
+                const todo = await fetchTodo(id);
                 results.push(todo);
-                i += 1;
+                
+                this.setState({ todoItems: results });
+                id++;
             } catch (e) {
-                console.log(e);
                 isFetching = false;
             }
-        }  
-
+        }
+        
         return results;
     }
 
     componentDidMount() {
-        this.getTodoSequentially().then((todoItems: TodoItem[]) => {
-            this.setState({ todoItems });
+        this.getTodoSequentially().then(() => {
+            this.setState({ isFetching: false });
         });
     }
 
     render() {
         return (
             <section className="todo">
+                <Navigation appName={"Todo"} tabs={["Home", "Todo", "Login"]} />
                 <h1>{this.props.title}</h1>
                 <p>{this.state.error}</p>
+                <div className="computer">{this.fetchingState}</div>
                 <ul>{this.todoItems}</ul>
                 <div className="toggle-container">{this.toggle}</div>
-                <div className="computer">{this.fetchingState}</div>
                 <TodoForm handleSubmitTodo={this.handleSubmitTodo} />
             </section>
         );
